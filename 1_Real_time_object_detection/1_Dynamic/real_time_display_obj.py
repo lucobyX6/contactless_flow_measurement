@@ -1,0 +1,145 @@
+import serial
+from queue import Queue
+from threading import Thread
+import numpy as np
+
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib import style
+
+def read_values(serialPort : serial, com_fifo : Queue):
+    reading = False
+    tmp_values = []
+    
+    while(1):
+        serialString = str(serialPort.readline().decode("Ascii"))
+
+        if("start" in serialString):
+            reading = True
+            tmp_values = []
+        
+        if("end" in serialString):
+            reading = False
+            if(len(tmp_values) !=0):
+                com_fifo.put(tmp_values)
+
+        if(reading == True and "start" not in serialString):
+            tmp_values.append(serialString[:-1].split(","))
+
+def animate(i):
+    
+    threshold = 100
+    group = 1
+    find = False
+
+    values = com_fifo.get()
+
+    matrice = np.zeros((8,8))
+    ax1.clear()
+
+    for i in range(len(values)):
+        matrice[int(values[i][0]), int(values[i][1])] = int(values[i][2])
+
+    matrice_objects = np.zeros((8,8))
+
+    # Calculate objects
+    diff = np.zeros((3,3))
+
+    for row in range(len(matrice)):
+        for col in range(len(matrice[0])):
+            
+            if(row-1 < 0 or col-1 < 0):
+                diff[0][0] = 9999 
+            else:
+                diff[0][0] = np.abs(matrice[row][col] - matrice[row-1][col-1])
+
+            if(row-1 < 0):
+                diff[0][1] = 9999
+            else:
+                diff[0][1] = np.abs(matrice[row][col] - matrice[row-1][col])
+
+            if(row-1 < 0 or col+1 > len(matrice[0])-1):
+                diff[0][2] = 9999
+            else:
+                diff[0][2] = np.abs(matrice[row][col] - matrice[row-1][col+1])
+
+            if(col-1 < 0):
+                diff[1][0] = 9999
+            else:
+                diff[1][0] = np.abs(matrice[row][col] - matrice[row][col-1])
+
+            diff[1][1] = -1
+
+            if(col+1 > len(matrice[0])-1):
+                diff[1][2] = 9999
+            else:
+                diff[1][2] = np.abs(matrice[row][col] - matrice[row][col+1])
+
+            if(row+1 > len(matrice)-1 or col-1 < 0):
+                diff[2][0] = 9999
+            else:
+                diff[2][0] = np.abs(matrice[row][col] - matrice[row+1][col-1])
+
+            if(row+1 > len(matrice)-1):
+                diff[2][1] = 9999
+            else:
+                diff[2][1] = np.abs(matrice[row][col] - matrice[row+1][col])
+
+            if(row+1 > len(matrice[0])-1 or col+1 > len(matrice)-1):
+                diff[2][2] = 9999
+            else:
+                diff[2][2] = np.abs(matrice[row][col] - matrice[row+1][col+1])
+
+            for i in range(len(diff)):
+                for j in range(len(diff[0])):
+                    value = diff[i][j]
+                    if((value != 9999 and value !=-1) and value < threshold): 
+                        if(matrice_objects[row+i-1][col+j-1] !=0):
+                            matrice_objects[row][col] = matrice_objects[row+i-1][col+j-1]
+                            find = True
+                        
+            if(find == False):
+                matrice_objects[row][col] = group
+                group +=1
+            else:
+                find = False
+    
+    color = ["blue", "orange", "green", "red", "purple", "brown", "pink", "gray", "olive", "cyan"]
+
+    tmp = []
+    for i in range(len(matrice_objects)):
+        for j in range(len(matrice_objects)):
+            index = int(matrice_objects[i][j])
+            if(index >= len(color)):
+                index = index%len(color)
+            tmp.append(color[index])
+    
+    x = [int(values[i][0]) for i in range(len(values))]
+    y = [int(values[i][1]) for i in range(len(values))]
+    z = [int(values[i][2]) for i in range(len(values))]
+
+    #ax1.matshow(matrice)
+    ax1.set_zlim(0, 3000)    
+    ax1.scatter3D(x, y, z, c=tmp ,marker='o')
+
+
+if __name__ == "__main__":
+    
+    serialPort = serial.Serial(port="COM5", baudrate=115200, bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE)
+
+    com_fifo = Queue()
+
+    get_values_thread = Thread(target=read_values, args=(serialPort, com_fifo, ))
+    get_values_thread.start()
+
+    style.use('fivethirtyeight')
+
+    fig = plt.figure()
+    ax1 = fig.add_subplot(projection='3d')
+
+
+    ani = animation.FuncAnimation(fig, animate, interval=50)
+    plt.show()
+
+    
+
