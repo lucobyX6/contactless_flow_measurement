@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
 
+from time import sleep
+
 def read_values(serialPort : serial, com_fifo : Queue):
     reading = False
     tmp_values = []
@@ -26,9 +28,11 @@ def read_values(serialPort : serial, com_fifo : Queue):
         if(reading == True and "start" not in serialString):
             tmp_values.append(serialString[:-1].split(","))
 
+    sleep(0.05)
+
 def animate(i):
     
-    threshold = 100
+    threshold = 500
     group = 1
     find = False
 
@@ -114,13 +118,18 @@ def animate(i):
                 index = index%len(color)
             tmp.append(color[index])
     
+    origin = [4,4]
     x = [int(values[i][0]) for i in range(len(values))]
     y = [int(values[i][1]) for i in range(len(values))]
     z = [int(values[i][2]) for i in range(len(values))]
 
     #ax1.matshow(matrice)
     ax1.set_zlim(0, 3000)    
+    for i in range(len(z)):
+        ax1.plot([origin[0], x[i]], [origin[0], y[i]], zs = [0, z[i]], linewidth=1, color = 'blue', alpha=0.1)
     ax1.scatter3D(x, y, z, c=tmp ,marker='o')
+    
+
 
 
 if __name__ == "__main__":
