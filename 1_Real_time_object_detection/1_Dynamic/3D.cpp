@@ -91,5 +91,5 @@ void loop() {
   Serial.printf("end\n");
 
   // Small delay to prevent overwhelming the serial buffer
-  delay(10);
+  delay(50);
 }
