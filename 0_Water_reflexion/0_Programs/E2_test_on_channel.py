@@ -9,25 +9,14 @@ file.close()
 
 list = content.strip().split("\n")
 
-
 split_list_x = [list[i].split(" ")[0][:-1] for i in range(len(list))]
 split_list_y = [list[i].split(" ")[1][:-1] for i in range(len(list))]
 split_list_z = [list[i].split(" ")[2] for i in range(len(list))]
 
 matrice_water = np.zeros((8,8))
-matrice_no = np.zeros((8,8))
 
 for i in range(len(split_list_x)):
         matrice_water[int(split_list_x[i])][int(split_list_y[i])] = int(split_list_z[i])
-
-for i in range(len(split_list_x)):
-        matrice_no[int(split_list_x[i])][int(split_list_y[i])] = base_value
-
-# Diff calculation
-diff = matrice_no - matrice_water
-
-# Mean calculation
-mean = np.mean(diff)
 
 # Raw value
 fig_raw, ax_raw = plt.subplots()
@@ -38,13 +27,6 @@ vmax_raw = matrice_water.max()
 im_raw = ax_raw.imshow(matrice_water, cmap='coolwarm', vmin=vmin_raw, vmax=vmax_raw)
 ax_raw.set_title("Valeur mesurée sur le canal")
 fig_raw.colorbar(im_raw, ax=ax_raw) 
-
-# Diff values
-fig_diff, ax_diff = plt.subplots()
-
-im_diff = ax_diff.imshow(diff, cmap='coolwarm')
-ax_diff.set_title("Différence entre la valeur attendue et la valeur mesurée sur le canal")
-fig_diff.colorbar(im_diff, ax=ax_diff)
 
 plt.tight_layout()
 plt.show()

@@ -5,7 +5,7 @@ threshold = 20
 group = 1
 find = False
 
-f = open("object_values.txt" ,"r")
+f = open("0_Programs/object_values.txt" ,"r")
 content = f.read()
 f.close()
 
@@ -13,7 +13,7 @@ list = content.strip().split("\n")
 
 split_list_x = [list[i].split(" ")[0][:-1] for i in range(len(list))]
 split_list_y = [list[i].split(" ")[1][:-1] for i in range(len(list))]
-split_list_z = [list[i].split(" ")[2][:-1] for i in range(len(list))]
+split_list_z = [list[i].split(" ")[2] for i in range(len(list))]
 
 matrice = np.zeros((8,8))
 
