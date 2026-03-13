@@ -1,25 +1,31 @@
+# Bibliothèques
 import numpy as np
 import matplotlib.pyplot as plt
 
-threshold = 20
-group = 1
-find = False
 
+threshold = 20 # Seuil de détection de l'objet
+group = 1 # Initialisation des groupes
+find = False # Toutes les voisins ont été exploré
+
+# Lecture des valeurs récoltées
 f = open("0_Programs/object_values.txt" ,"r")
 content = f.read()
 f.close()
 
+# Traitement des données
 list = content.strip().split("\n")
 
 split_list_x = [list[i].split(" ")[0][:-1] for i in range(len(list))]
 split_list_y = [list[i].split(" ")[1][:-1] for i in range(len(list))]
 split_list_z = [list[i].split(" ")[2] for i in range(len(list))]
 
+# Mise sous forme d'une matrice
 matrice = np.zeros((8,8))
 
 for i in range(len(split_list_x)):
         matrice[int(split_list_x[i])][int(split_list_y[i])] = int(split_list_z[i])
 
+# Affichage de la matrice avant traitement
 vmin = min(split_list_z)
 vmax = max(split_list_z)
 
@@ -30,12 +36,12 @@ im = ax0.matshow(matrice, cmap='viridis', vmin=vmin, vmax=vmax)
 ax0.set_title("Valeurs brutes")
 fig0.colorbar(im, ax=ax0)
 
-# Find object
-
+# Identification des objets
 matrice_objects = np.zeros((8,8))
 
 diff = np.zeros((3,3))
 
+# Calcul de proximité des voisins
 for row in range(len(matrice)):
     for col in range(len(matrice[0])):
         
@@ -81,6 +87,7 @@ for row in range(len(matrice)):
         else:
             diff[2][2] = np.abs(matrice[row][col] - matrice[row+1][col+1])
 
+        # Choix du groupe
         for i in range(len(diff)):
             for j in range(len(diff[0])):
                 value = diff[i][j]
@@ -89,15 +96,16 @@ for row in range(len(matrice)):
                     if(matrice_objects[row+i-1][col+j-1] !=0):
                         matrice_objects[row][col] = matrice_objects[row+i-1][col+j-1]
                         find = True
-                    
+
+        # Si aucun voisin proche, création d'un nouveau groupe     
         if(find == False):
+            # Création d'un nouveau groupe
             matrice_objects[row][col] = group
             group +=1
         else:
             find = False
 
-print(matrice_objects)
-
+# Affichage des groupes
 fig1 = plt.figure()
 ax1 = fig1.add_subplot()
 
