@@ -119,7 +119,7 @@ def animate(i):
                 index = index%len(color)
             tmp.append(color[index])
     
-    origin = [4,4]
+    origin = [0,0]
     x = []
     y = []
     z = []
