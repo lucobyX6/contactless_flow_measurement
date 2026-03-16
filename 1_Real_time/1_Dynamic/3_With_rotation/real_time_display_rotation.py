@@ -85,8 +85,10 @@ def animate(i):
     # Get values (distances, objects)  
     values = com_fifo.get()
 
-    matrice = np.zeros((8,8))
+    angle = int(values.pop(0)[0][0])
+    print(angle)
 
+    matrice = np.zeros((8,8))
     for i in range(len(values)):
         matrice[int(values[i][0]), int(values[i][1])] = int(values[i][2])
 
@@ -97,7 +99,6 @@ def animate(i):
 
     for row in range(len(matrice)):
         for col in range(len(matrice[0])):
-            
             
             # A point is in neighborhood (threshold) ? 
             if(row-1 < 0 or col-1 < 0):
@@ -170,21 +171,19 @@ def animate(i):
     
     # Display values with lines from TOF and angle
     origin = [0,0]
-    x_temp,y_temp, z_temp=0,0,0
-    x_rot,y_rot, z_rot=0,0,0
+    x_temp,y_temp,z_temp=0,0,0
+    x_rot,y_rot,z_rot=0,0,0
 
     x = []
     y = []
     z = []
-
-    angle = 0
 
     for row in range(8):
         for col in range(8):
             index = 8*row + col
             x_temp = (row-4)*m.sin(0.11999)*int(values[index][2])
             y_temp = (col-4)*m.sin(0.11999)*int(values[index][2])
-            z_temp = (values[index][2])
+            z_temp = int(values[index][2])
 
             x_rot = m.cos(angle)*x_temp - m.sin(angle)*z_temp
             y_rot = y_temp
@@ -194,23 +193,12 @@ def animate(i):
             y.append(y_rot)
             z.append(z_rot)
 
-    # Take care of distances between points
-    for row in range(8):
-        for col in range(8):
-            index = 8*row + col
-            x.append((row-4)*m.sin(0.11999)*int(values[index][2]))
-            y.append((col-4)*m.sin(0.11999)*int(values[index][2]))
-            z.append(int(values[index][2]))
-
+    ax1.clear()
     ax1.set_xlim(-1000, 1000)    
     ax1.set_ylim(-1000, 1000)    
     for i in range(len(z)):
         ax1.plot([origin[0], x[i]], [origin[0], y[i]], zs = [0, z[i]], linewidth=1, color = 'blue', alpha=0.1)
     ax1.scatter3D(x, y, z, c=tmp ,marker='o')
-
-    
-
-
 
 if __name__ == "__main__":
     
