@@ -1,16 +1,42 @@
+# - - - Librairies - - -
+
+# Data transmission
 import serial
 from queue import Queue
 from threading import Thread
+
+# List handler
 import numpy as np
 
+# Show results
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
 
-from time import sleep
+# Mathematical formula
 import math as m
 
+# Delay
+from time import sleep
+
 def read_values(serialPort : serial, com_fifo : Queue):
+    """
+    **Abstract** : Read formatted values from STM32 board, store it in a list and send it through a pipe
+
+    **Input** :
+    - serialPort [serial] : Connection to reading port
+    - com_fifo [Queue] : Pipe to transmit data in a list to animate
+
+    **Output** : None
+
+    **Indirect output** : com_fifo pipe
+
+    **Necessary librairies** :
+    - import serial 
+    - from queue import Queue
+    - from threading import Thread
+    """
+    
     reading = False
     tmp_values = []
     
@@ -29,10 +55,28 @@ def read_values(serialPort : serial, com_fifo : Queue):
         if(reading == True and "start" not in serialString):
             tmp_values.append(serialString[:-1].split(","))
 
-    sleep(0.05)
+    sleep(0.05) # Delay to synchronize reading and writing
 
 def animate(i):
-    
+    """
+    **Abstract** : Display with 50ms loop values on a 3D graph 
+
+    **Input** :
+    - i [int]
+
+    **Output** : None
+
+    **Indirect output** : None
+
+    **Necessary librairies** :
+    - import numpy as np
+    - import math as m
+    - import matplotlib.pyplot as plt
+    - import matplotlib.animation as animation
+    - from matplotlib import style
+    - 
+    """
+
     threshold = 500
     group = 1
     find = False

@@ -1,15 +1,42 @@
+# - - - Librairies - - -
+
+# Data transmission
 import serial
 from queue import Queue
 from threading import Thread
+
+# List handler
 import numpy as np
 
+# Show results
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
 
+# Mathematical formula
+import math as m
+
+# Delay
 from time import sleep
 
 def read_values(serialPort : serial, com_fifo : Queue):
+    """
+    **Abstract** : Read formatted values from STM32 board, store it in a list and send it through a pipe
+
+    **Input** :
+    - serialPort [serial] : Connection to reading port
+    - com_fifo [Queue] : Pipe to transmit data in a list to animate
+
+    **Output** : None
+
+    **Indirect output** : com_fifo pipe
+
+    **Necessary librairies** :
+    - import serial 
+    - from queue import Queue
+    - from threading import Thread
+    """
+    
     reading = False
     tmp_values = []
     
