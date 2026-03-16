@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <SparkFun_VL53L5CX_Library.h>
-#include <HardwareTimer.h>
 
 // Pin definitions
 #define SDA_PIN PB9
@@ -8,18 +7,9 @@
 #define LPN_PIN PB0
 #define PWR_EN_PIN PC0
 
-#define LED1_PIN D13
-
 // VL53L5CX ToF sensor instance
 SparkFun_VL53L5CX sensor;
 VL53L5CX_ResultsData measurementData;
-
-// Timer
-HardwareTimer *Tim_result = new HardwareTimer(TIM6);
-
-// Results
-int mean_results[100][8][8];
-volatile int round_ms =0;
 
 // I2C speed - use 1MHz for fast data transfer
 #define I2C_SPEED 1000000
@@ -73,10 +63,12 @@ void setup() {
 void loop() {
 
   Serial.printf("start\n");
+
   // Check if new ToF data is available
   if (sensor.isDataReady()) {
     if (sensor.getRangingData(&measurementData)) {
 
+      // Send all value using serial port
       for (int row = 0; row < 8; row++) 
       {
         for (int col = 0; col < 8; col++) 

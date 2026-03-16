@@ -55,7 +55,7 @@ def read_values(serialPort : serial, com_fifo : Queue):
         if(reading == True and "start" not in serialString):
             tmp_values.append(serialString[:-1].split(","))
 
-    sleep(0.05) # Delay to synchronize reading and writing
+    sleep(0.05)
 
 def animate(i):
     """
@@ -76,15 +76,16 @@ def animate(i):
     - from matplotlib import style
     - 
     """
+    
+    threshold = 500 # Threshold to be a neighbor
+    
+    group = 1 # Group counter
+    find = False # If no group in neighborhood, define a arbitrary group
 
-    threshold = 500
-    group = 1
-    find = False
-
+    # Get values (distances, objects)  
     values = com_fifo.get()
 
     matrice = np.zeros((8,8))
-    ax1.clear()
 
     for i in range(len(values)):
         matrice[int(values[i][0]), int(values[i][1])] = int(values[i][2])
@@ -97,6 +98,8 @@ def animate(i):
     for row in range(len(matrice)):
         for col in range(len(matrice[0])):
             
+            
+            # A point is in neighborhood (threshold) ? 
             if(row-1 < 0 or col-1 < 0):
                 diff[0][0] = 9999 
             else:
@@ -139,6 +142,7 @@ def animate(i):
             else:
                 diff[2][2] = np.abs(matrice[row][col] - matrice[row+1][col+1])
 
+            # This neighbor has a group ? 
             for i in range(len(diff)):
                 for j in range(len(diff[0])):
                     value = diff[i][j]
@@ -146,15 +150,16 @@ def animate(i):
                         if(matrice_objects[row+i-1][col+j-1] !=0):
                             matrice_objects[row][col] = matrice_objects[row+i-1][col+j-1]
                             find = True
-                        
+
+            # If no, assign an arbitrary group       
             if(find == False):
                 matrice_objects[row][col] = group
                 group +=1
             else:
                 find = False
     
+    # Define a color for a group
     color = ["blue", "orange", "green", "red", "purple", "brown", "pink", "gray", "olive", "cyan"]
-
     tmp = []
     for i in range(len(matrice_objects)):
         for j in range(len(matrice_objects)):
@@ -163,11 +168,13 @@ def animate(i):
                 index = index%len(color)
             tmp.append(color[index])
     
+    # Display values with lines from TOF
     origin = [0,0]
     x = []
     y = []
     z = []
 
+    # Take care of distances between points
     for row in range(8):
         for col in range(8):
             index = 8*row + col
@@ -175,31 +182,32 @@ def animate(i):
             y.append((col-4)*m.sin(0.11999)*int(values[index][2]))
             z.append(int(values[index][2]))
 
-    #ax1.matshow(matrice)
     ax1.set_xlim(-1000, 1000)    
     ax1.set_ylim(-1000, 1000)    
     for i in range(len(z)):
         ax1.plot([origin[0], x[i]], [origin[0], y[i]], zs = [0, z[i]], linewidth=1, color = 'blue', alpha=0.1)
     ax1.scatter3D(x, y, z, c=tmp ,marker='o')
+
     
 
 
 
 if __name__ == "__main__":
     
+    # Turn on connection with board
     serialPort = serial.Serial(port="COM5", baudrate=115200, bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE)
 
+    # Fifo to transmit from read_values to animate
     com_fifo = Queue()
 
+    # Get values
     get_values_thread = Thread(target=read_values, args=(serialPort, com_fifo, ))
     get_values_thread.start()
 
+    # Display values on 3D chart
     style.use('fivethirtyeight')
-
     fig = plt.figure()
     ax1 = fig.add_subplot(projection='3d')
-
-
     ani = animation.FuncAnimation(fig, animate, interval=50)
     plt.show()
 
