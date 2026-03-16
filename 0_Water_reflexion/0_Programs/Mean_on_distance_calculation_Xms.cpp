@@ -7,7 +7,6 @@
 #define LPN_PIN PB0
 #define PWR_EN_PIN PC0
 
-
 // VL53L5CX ToF sensor instance
 SparkFun_VL53L5CX sensor;
 VL53L5CX_ResultsData measurementData;
@@ -76,6 +75,7 @@ void loop() {
   if (sensor.isDataReady()) {
     if (sensor.getRangingData(&measurementData)) {
 
+      // Mean for each sensor on 1s (100ms step)
       for (int row = 0; row < 8; row++) 
       {
         for (int col = 0; col < 8; col++) 
@@ -88,13 +88,14 @@ void loop() {
     }
   }  
 
+  // Small delay to prevent overwhelming the serial buffer
   delay(100);
   round_mean = round_mean +1;
 }
 
 void show_results()
 {
-  Serial.println(round_mean);
+  // Print values in serial monitor
   for(int row=0; row < 8; row++)
   {
     for(int col=0; col < 8; col++)
