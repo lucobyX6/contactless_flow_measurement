@@ -85,8 +85,7 @@ def animate(i):
     # Get values (distances, objects)  
     values = com_fifo.get()
 
-    angle = int(values.pop(0)[0][0])
-    print(angle)
+    angle = (int(values.pop(0)[0]))*m.pi/180
 
     matrice = np.zeros((8,8))
     for i in range(len(values)):
@@ -195,7 +194,8 @@ def animate(i):
 
     ax1.clear()
     ax1.set_xlim(-1000, 1000)    
-    ax1.set_ylim(-1000, 1000)    
+    ax1.set_ylim(-1000, 1000)   
+    ax1.set_zlim(0, 2000) 
     for i in range(len(z)):
         ax1.plot([origin[0], x[i]], [origin[0], y[i]], zs = [0, z[i]], linewidth=1, color = 'blue', alpha=0.1)
     ax1.scatter3D(x, y, z, c=tmp ,marker='o')

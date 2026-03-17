@@ -8,7 +8,7 @@ group = 1 # Group counter
 find = False # No neighbor with a group
 
 # Read results file
-f = open("contactless_flow_measurement/1_Real_time/0_Static/0_Programs/object_values.txt" ,"r")
+f = open("contactless_flow_measurement/1_Real_time/0_Static/1_Data/E3_Second_pos_obj.txt" ,"r")
 content = f.read()
 f.close()
 
@@ -115,6 +115,36 @@ vmax_obj = max(obj.max() for obj in matrice_objects)
 im1 = ax1.matshow(matrice_objects, vmin=vmin_obj, vmax=vmax_obj)
 ax1.set_title("Objets")       
 fig1.colorbar(im1, ax=ax1)    
+
+# Object movement calculation 
+
+# Groups list
+groups = np.unique(matrice_objects)
+groups = groups[groups != 0]
+
+# Search for largest
+largest = None
+max_pixels = 0
+
+for g in groups:
+
+    pixels = np.argwhere(matrice_objects == g)
+
+    if len(pixels) > max_pixels:
+        max_pixels = len(pixels)
+        largest = g
+
+pixels = np.argwhere(matrice_objects == largest)
+
+cx = np.mean(pixels[:,0])
+cy = np.mean(pixels[:,1])
+
+fig2 = plt.figure()
+ax2 = fig2.add_subplot()
+im2 = ax2.matshow(matrice_objects, vmin=vmin_obj, vmax=vmax_obj)
+im3 = ax2.scatter(cy,cx, c = "red")
+ax2.set_title("Position 1")       
+fig2.colorbar(im2, ax=ax2)  
 
 plt.tight_layout()
 plt.show()
