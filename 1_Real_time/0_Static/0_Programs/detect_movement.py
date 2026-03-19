@@ -1,31 +1,31 @@
-# Bibliothèques
+# Librairies
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-threshold = 20 # Seuil de détection de l'objet
-group = 1 # Initialisation des groupes
-find = False # Toutes les voisins ont été exploré
+threshold = 20 # Threshold to detect object
+group = 1 # Group counter
+find = False # No neighbor with a group
 
-# Lecture des valeurs récoltées
-f = open("0_Programs/object_values.txt" ,"r")
+# Read results file
+f = open("contactless_flow_measurement/1_Real_time/0_Static/1_Data/E3_Second_pos_obj.txt" ,"r")
 content = f.read()
 f.close()
 
-# Traitement des données
+# Extract data
 list = content.strip().split("\n")
 
 split_list_x = [list[i].split(" ")[0][:-1] for i in range(len(list))]
 split_list_y = [list[i].split(" ")[1][:-1] for i in range(len(list))]
 split_list_z = [list[i].split(" ")[2] for i in range(len(list))]
 
-# Mise sous forme d'une matrice
+# Transfrom in matrice
 matrice = np.zeros((8,8))
 
 for i in range(len(split_list_x)):
         matrice[int(split_list_x[i])][int(split_list_y[i])] = int(split_list_z[i])
 
-# Affichage de la matrice avant traitement
+# Distance matrice before obj identification
 vmin = min(split_list_z)
 vmax = max(split_list_z)
 
@@ -36,15 +36,15 @@ im = ax0.matshow(matrice, cmap='viridis', vmin=vmin, vmax=vmax)
 ax0.set_title("Valeurs brutes")
 fig0.colorbar(im, ax=ax0)
 
-# Identification des objets
+# Identify object
 matrice_objects = np.zeros((8,8))
 
 diff = np.zeros((3,3))
 
-# Calcul de proximité des voisins
 for row in range(len(matrice)):
     for col in range(len(matrice[0])):
         
+        # A point is in neighborhood (threshold) ? 
         if(row-1 < 0 or col-1 < 0):
             diff[0][0] = 9999 
         else:
@@ -87,7 +87,7 @@ for row in range(len(matrice)):
         else:
             diff[2][2] = np.abs(matrice[row][col] - matrice[row+1][col+1])
 
-        # Choix du groupe
+        # This neighbor has a group ? 
         for i in range(len(diff)):
             for j in range(len(diff[0])):
                 value = diff[i][j]
@@ -97,7 +97,7 @@ for row in range(len(matrice)):
                         matrice_objects[row][col] = matrice_objects[row+i-1][col+j-1]
                         find = True
 
-        # Si aucun voisin proche, création d'un nouveau groupe     
+        # If no, assign an arbitrary group  
         if(find == False):
             # Création d'un nouveau groupe
             matrice_objects[row][col] = group
@@ -105,7 +105,7 @@ for row in range(len(matrice)):
         else:
             find = False
 
-# Affichage des groupes
+# Display objects
 fig1 = plt.figure()
 ax1 = fig1.add_subplot()
 
@@ -115,6 +115,36 @@ vmax_obj = max(obj.max() for obj in matrice_objects)
 im1 = ax1.matshow(matrice_objects, vmin=vmin_obj, vmax=vmax_obj)
 ax1.set_title("Objets")       
 fig1.colorbar(im1, ax=ax1)    
+
+# Object movement calculation 
+
+# Groups list
+groups = np.unique(matrice_objects)
+groups = groups[groups != 0]
+
+# Search for largest
+largest = None
+max_pixels = 0
+
+for g in groups:
+
+    pixels = np.argwhere(matrice_objects == g)
+
+    if len(pixels) > max_pixels:
+        max_pixels = len(pixels)
+        largest = g
+
+pixels = np.argwhere(matrice_objects == largest)
+
+cx = np.mean(pixels[:,0])
+cy = np.mean(pixels[:,1])
+
+fig2 = plt.figure()
+ax2 = fig2.add_subplot()
+im2 = ax2.matshow(matrice_objects, vmin=vmin_obj, vmax=vmax_obj)
+im3 = ax2.scatter(cy,cx, c = "red")
+ax2.set_title("Position 1")       
+fig2.colorbar(im2, ax=ax2)  
 
 plt.tight_layout()
 plt.show()

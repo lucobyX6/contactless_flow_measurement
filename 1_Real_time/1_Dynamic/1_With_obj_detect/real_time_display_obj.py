@@ -1,15 +1,42 @@
+# - - - Librairies - - -
+
+# Data transmission
 import serial
 from queue import Queue
 from threading import Thread
+
+# List handler
 import numpy as np
 
+# Show results
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
 
+# Mathematical formula
+import math as m
+
+# Delay
 from time import sleep
 
 def read_values(serialPort : serial, com_fifo : Queue):
+    """
+    **Abstract** : Read formatted values from STM32 board, store it in a list and send it through a pipe
+
+    **Input** :
+    - serialPort [serial] : Connection to reading port
+    - com_fifo [Queue] : Pipe to transmit data in a list to animate
+
+    **Output** : None
+
+    **Indirect output** : com_fifo pipe
+
+    **Necessary librairies** :
+    - import serial 
+    - from queue import Queue
+    - from threading import Thread
+    """
+    
     reading = False
     tmp_values = []
     
@@ -31,15 +58,34 @@ def read_values(serialPort : serial, com_fifo : Queue):
     sleep(0.05)
 
 def animate(i):
-    
-    threshold = 500
-    group = 1
-    find = False
+    """
+    **Abstract** : Display with 50ms loop values on a 3D graph 
 
+    **Input** :
+    - i [int]
+
+    **Output** : None
+
+    **Indirect output** : None
+
+    **Necessary librairies** :
+    - import numpy as np
+    - import math as m
+    - import matplotlib.pyplot as plt
+    - import matplotlib.animation as animation
+    - from matplotlib import style
+    - 
+    """
+    
+    threshold = 500 # Threshold to be a neighbor
+    
+    group = 1 # Group counter
+    find = False # If no group in neighborhood, define a arbitrary group
+
+    # Get values (distances, objects)  
     values = com_fifo.get()
 
     matrice = np.zeros((8,8))
-    ax1.clear()
 
     for i in range(len(values)):
         matrice[int(values[i][0]), int(values[i][1])] = int(values[i][2])
@@ -52,6 +98,8 @@ def animate(i):
     for row in range(len(matrice)):
         for col in range(len(matrice[0])):
             
+            
+            # A point is in neighborhood (threshold) ? 
             if(row-1 < 0 or col-1 < 0):
                 diff[0][0] = 9999 
             else:
@@ -94,6 +142,7 @@ def animate(i):
             else:
                 diff[2][2] = np.abs(matrice[row][col] - matrice[row+1][col+1])
 
+            # This neighbor has a group ? 
             for i in range(len(diff)):
                 for j in range(len(diff[0])):
                     value = diff[i][j]
@@ -101,15 +150,16 @@ def animate(i):
                         if(matrice_objects[row+i-1][col+j-1] !=0):
                             matrice_objects[row][col] = matrice_objects[row+i-1][col+j-1]
                             find = True
-                        
+
+            # If no, assign an arbitrary group       
             if(find == False):
                 matrice_objects[row][col] = group
                 group +=1
             else:
                 find = False
     
+    # Define a color for a group
     color = ["blue", "orange", "green", "red", "purple", "brown", "pink", "gray", "olive", "cyan"]
-
     tmp = []
     for i in range(len(matrice_objects)):
         for j in range(len(matrice_objects)):
@@ -118,12 +168,13 @@ def animate(i):
                 index = index%len(color)
             tmp.append(color[index])
     
+    # Display values with lines from TOF
     origin = [4,4]
     x = [int(values[i][0]) for i in range(len(values))]
     y = [int(values[i][1]) for i in range(len(values))]
     z = [int(values[i][2]) for i in range(len(values))]
 
-    #ax1.matshow(matrice)
+    ax1.clear()
     ax1.set_zlim(0, 3000)    
     for i in range(len(z)):
         ax1.plot([origin[0], x[i]], [origin[0], y[i]], zs = [0, z[i]], linewidth=1, color = 'blue', alpha=0.1)
@@ -134,19 +185,20 @@ def animate(i):
 
 if __name__ == "__main__":
     
+    # Turn on connection with board
     serialPort = serial.Serial(port="COM5", baudrate=115200, bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE)
 
+    # Fifo to transmit from read_values to animate
     com_fifo = Queue()
 
+    # Get values
     get_values_thread = Thread(target=read_values, args=(serialPort, com_fifo, ))
     get_values_thread.start()
 
+    # Display values on 3D chart
     style.use('fivethirtyeight')
-
     fig = plt.figure()
     ax1 = fig.add_subplot(projection='3d')
-
-
     ani = animation.FuncAnimation(fig, animate, interval=50)
     plt.show()
 

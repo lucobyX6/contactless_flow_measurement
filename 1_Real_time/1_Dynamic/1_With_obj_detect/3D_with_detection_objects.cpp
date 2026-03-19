@@ -1,6 +1,6 @@
+/* - - - Librairies - - - */
 #include <Wire.h>
 #include <SparkFun_VL53L5CX_Library.h>
-#include <HardwareTimer.h>
 
 // Pin definitions
 #define SDA_PIN PB9
@@ -15,20 +15,23 @@ VL53L5CX_ResultsData measurementData;
 // I2C speed - use 1MHz for fast data transfer
 #define I2C_SPEED 1000000
 
-// Objects identification
+// Objects identification variables
+int matrice[8][8]; // Distances between sensor and objects
+int matrice_objects[8][8]; // Approximation of the membership object
 
-int matrice[8][8];
-int matrice_objects[8][8];
-int diff[3][3];
-int value = 0;
-int threshold = 100;
-bool find = false; 
-int group = 1;
+int diff[3][3]; // Neighborhood evaluation
+int value = 0; // Temporary value
 
-// Functions
+int threshold = 100; // Threshold to be a neighbor of same group
+int group = 1; // group counter
+
+bool find = false; // No group find in neighborhood
+
+
+/* - - - Prototypes - - - */
 int abs(int entry);
 
-
+/* - - - One time at start - - - */
 void setup() {
   Serial.begin(115200); // COM 115200 bauds
   delay(3000); // Waiting for serial monitor
@@ -88,6 +91,7 @@ void setup() {
   }
 }
 
+/* - - - Infinity loop - - - */
 void loop() {
 
   
@@ -95,6 +99,7 @@ void loop() {
   if (sensor.isDataReady()) {
     if (sensor.getRangingData(&measurementData)) {
 
+      // Get distances values
       for (int row = 0; row < 8; row++) 
       {
         for (int col = 0; col < 8; col++) 
@@ -102,16 +107,18 @@ void loop() {
           int index = row * 8 + col;
 
           matrice[row][col] = measurementData.distance_mm[index];
-          //Serial.printf("-%d-", matrice[row][col]);
         }
       }
     }
   }  
 
+  // Estimate group
   for (int row = 0; row < 8; row++) 
   {
     for (int col = 0; col < 8; col++) 
     {
+      
+      // Calculate distances with neighborhood
       if(row-1 < 0 || col-1 < 0)
         diff[0][0] = 9999;
       else
@@ -154,6 +161,7 @@ void loop() {
       else
           diff[2][2] = abs(matrice[row][col] - matrice[row+1][col+1]);
     
+      // If two points have proximity, one of this point already have a group ? 
       for (int i = 0; i < 3; i++) 
       {
         for (int j = 0; j < 3; j++) 
@@ -172,6 +180,7 @@ void loop() {
         }
       }
 
+      // If no ... so we choose an arbitrary group
       if(find == false)
       { 
         matrice_objects[row][col] = group;
@@ -184,8 +193,11 @@ void loop() {
     }
   }
 
+  // Restart values for next acquisition
   find = false;
   group = 1;
+
+  // Send values using serialport
   Serial.printf("start\n");
   for (int row = 0; row < 8; row++) 
   {
@@ -213,13 +225,11 @@ void loop() {
   delay(50);
 }
 
-
+/* - - - Function - - - */
 int abs(int entry)
 {
   if(entry < 0)
     return -entry;
   else
     return entry;
-  
-  
 }

@@ -1,14 +1,42 @@
+# - - - Librairies - - -
+
+# Data transmission
 import serial
 from queue import Queue
 from threading import Thread
-import numpy as np
-from time import sleep
 
+# List handler
+import numpy as np
+
+# Show results
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
 
+# Mathematical formula
+import math as m
+
+# Delay
+from time import sleep
+
 def read_values(serialPort : serial, com_fifo : Queue):
+    """
+    **Abstract** : Read formatted values from STM32 board, store it in a list and send it through a pipe
+
+    **Input** :
+    - serialPort [serial] : Connection to reading port
+    - com_fifo [Queue] : Pipe to transmit data in a list to animate
+
+    **Output** : None
+
+    **Indirect output** : com_fifo pipe
+
+    **Necessary librairies** :
+    - import serial 
+    - from queue import Queue
+    - from threading import Thread
+    """
+    
     reading = False
     tmp_values = []
     
@@ -29,12 +57,34 @@ def read_values(serialPort : serial, com_fifo : Queue):
 
     sleep(0.05)
 
+
+
 def animate(i):     
+    """
+    **Abstract** : Display with 50ms loop values on a 3D graph 
+
+    **Input** :
+    - i [int]
+
+    **Output** : None
+
+    **Indirect output** : None
+
+    **Necessary librairies** :
+    - import numpy as np
+    - import math as m
+    - import matplotlib.pyplot as plt
+    - import matplotlib.animation as animation
+    - from matplotlib import style
+    - 
+    """
     
+    # Get values (distances, objects)  
     values = com_fifo.get()
+    
+    # Transform list in corresponding matrice
     i=0
     j=0
-
     matrice_distances = np.zeros((8,8))
     matrice_objects = np.zeros((8,8))
     for index in range(len(values[0])):
@@ -47,9 +97,8 @@ def animate(i):
                 i +=1
                 j =0
 
-    ax1.clear()  
+    # Define color for objects
     color = ["blue", "orange", "green", "red", "purple", "brown", "pink", "gray", "olive", "cyan"]
-
     tmp = []
     for i in range(len(matrice_objects)):
         for j in range(len(matrice_objects)):
@@ -58,6 +107,7 @@ def animate(i):
                 index = index%len(color)
             tmp.append(color[index])
     
+    # Display values
     x = []
     y = []
     z = []
@@ -68,25 +118,27 @@ def animate(i):
             y.append(j)
             z.append(matrice_distances[i][j])
 
+    ax1.clear()  
     ax1.set_zlim(0, 3000)    
     ax1.scatter3D(x, y, z, c=tmp ,marker='o')
 
 
 if __name__ == "__main__":
     
+    # Turn on connection with board
     serialPort = serial.Serial(port="COM5", baudrate=115200, bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE)
 
+    # Fifo to transmit from read_values to animate
     com_fifo = Queue()
 
+    # Get values
     get_values_thread = Thread(target=read_values, args=(serialPort, com_fifo, ))
     get_values_thread.start()
 
+    # Display values on 3D chart
     style.use('fivethirtyeight')
-
     fig = plt.figure()
     ax1 = fig.add_subplot(projection='3d')
-
-
     ani = animation.FuncAnimation(fig, animate, interval=50)
     plt.show()
 
