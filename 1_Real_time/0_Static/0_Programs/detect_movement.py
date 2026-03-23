@@ -109,11 +109,11 @@ for row in range(len(matrice)):
 fig1 = plt.figure()
 ax1 = fig1.add_subplot()
 
-vmin_obj = min(obj.min() for obj in matrice_objects)
-vmax_obj = max(obj.max() for obj in matrice_objects)
+vmin_obj = 0
+vmax_obj = 20
 
 im1 = ax1.matshow(matrice_objects, vmin=vmin_obj, vmax=vmax_obj)
-ax1.set_title("Objets")       
+ax1.set_title("Objects detection")       
 fig1.colorbar(im1, ax=ax1)    
 
 # Object movement calculation 
@@ -143,8 +143,9 @@ fig2 = plt.figure()
 ax2 = fig2.add_subplot()
 im2 = ax2.matshow(matrice_objects, vmin=vmin_obj, vmax=vmax_obj)
 im3 = ax2.scatter(cy,cx, c = "red")
-ax2.set_title("Position 1")       
+ax2.set_title("Objects and main center detection position 2")       
 fig2.colorbar(im2, ax=ax2)  
+plt.savefig("contactless_flow_measurement/1_Real_time/0_Static/2_Pictures/move_pos2.png")
 
 plt.tight_layout()
 plt.show()

@@ -94,10 +94,10 @@ fig0.colorbar(im, ax=ax0)
 fig2, axes2 = plt.subplots(2, 2, figsize=(12, 10))
 axes2 = axes2.ravel()
 titres_diff = [
-    f"Différence (1/4 L - Sans eau)\nMoyenne: {moy_1_4L:.1f}",
-    f"Différence (1/2 L - Sans eau)\nMoyenne: {moy_1_2L:.1f}",
-    f"Différence (3/4 L - Sans eau)\nMoyenne: {moy_3_4L:.1f}",
-    f"Différence (1 L - Sans eau)\nMoyenne: {moy_1L:.1f}"
+    f"Difference (1/4 L - No water)\Mean: {moy_1_4L:.1f}",
+    f"Difference (1/2 L - No water)\Mean: {moy_1_2L:.1f}",
+    f"Difference (3/4 L - No water)\Mean: {moy_3_4L:.1f}",
+    f"Difference (1 L - No water)\Mean: {moy_1L:.1f}"
 ]
 matrices_diff = [diff_1_4L, diff_1_2L, diff_3_4L, diff_1L]
 vmin_diff = min(matrice.min() for matrice in matrices_diff)
@@ -107,6 +107,6 @@ for i, (matrice_diff, titre_diff) in enumerate(zip(matrices_diff, titres_diff)):
     im = axes2[i].imshow(matrice_diff, cmap='coolwarm', vmin=vmin_diff, vmax=vmax_diff)
     axes2[i].set_title(titre_diff)
     fig2.colorbar(im, ax=axes2[i])
-
+    
 plt.tight_layout()
 plt.show()

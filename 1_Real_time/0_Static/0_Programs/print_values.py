@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Read results file
-file = open("contactless_flow_measurement/0_Water_reflexion/2_Data/data.txt", "r")
+file = open("contactless_flow_measurement/1_Real_time/0_Static/1_Data/big_object_far.txt", "r")
 content = file.read()
 file.close()
 
@@ -21,11 +21,11 @@ for i in range(len(split_list_x)):
 # Display values
 fig_raw, ax_raw = plt.subplots()
 
-vmin_raw = matrice_water.min()
-vmax_raw = matrice_water.max()
+vmin_raw = 0
+vmax_raw = 700
 
 im_raw = ax_raw.imshow(matrice_water, cmap='coolwarm', vmin=vmin_raw, vmax=vmax_raw)
-ax_raw.set_title("Distance measure on channel")
+ax_raw.set_title("Measure near to the object")
 fig_raw.colorbar(im_raw, ax=ax_raw) 
 
 plt.tight_layout()
