@@ -1,5 +1,6 @@
 #include <Wire.h>
 #include <SparkFun_VL53L5CX_Library.h>
+#include <HardwareTimer.h>
 
 // Pin definitions
 #define SDA_PIN PB9
@@ -10,6 +11,9 @@
 // VL53L5CX ToF sensor instance
 SparkFun_VL53L5CX sensor;
 VL53L5CX_ResultsData measurementData;
+
+// Timer
+HardwareTimer *Tim_result = new HardwareTimer(TIM6);
 
 // Results
 int mean_results[8][8];

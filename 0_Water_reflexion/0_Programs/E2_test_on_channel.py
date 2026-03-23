@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Read results file
-file = open("contactless_flow_measurement/0_Water_reflexion/2_Data/data.txt", "r")
+file = open("contactless_flow_measurement/0_Water_reflexion/2_Data/channel_water_test.txt", "r")
 content = file.read()
 file.close()
 
