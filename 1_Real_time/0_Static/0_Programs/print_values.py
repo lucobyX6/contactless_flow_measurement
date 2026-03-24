@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Read results file
-file = open("contactless_flow_measurement/1_Real_time/0_Static/1_Data/big_object_far.txt", "r")
+file = open("contactless_flow_measurement/1_Real_time/0_Static/1_Data/Distance_problem/small_obj_far.txt", "r")
 content = file.read()
 file.close()
 

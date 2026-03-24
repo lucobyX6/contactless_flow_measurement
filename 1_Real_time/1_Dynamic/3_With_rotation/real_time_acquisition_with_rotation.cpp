@@ -98,13 +98,14 @@ void loop() {
   // Small delay to prevent overwhelming the serial buffer
   delay(50);
 
-  angle = angle + direction*10;
-  servo_tof.write(angle+90);  
-  if(angle >= 90)
+  angle = angle + direction;
+  servo_tof.write(angle);  
+  if(angle >= 180)
   {
+    while(1);
     direction = -1;
   }
-  if(angle <= -90)
+  if(angle <= 0)
   {
     direction = 1;
   }

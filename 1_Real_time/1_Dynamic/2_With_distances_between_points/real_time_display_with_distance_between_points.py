@@ -182,12 +182,12 @@ def animate(i):
             y.append((col-4)*m.sin(0.11999)*int(values[index][2]))
             z.append(int(values[index][2]))
 
+    ax1.clear()
     ax1.set_xlim(-1000, 1000)    
     ax1.set_ylim(-1000, 1000)    
     for i in range(len(z)):
         ax1.plot([origin[0], x[i]], [origin[0], y[i]], zs = [0, z[i]], linewidth=1, color = 'blue', alpha=0.1)
     ax1.scatter3D(x, y, z, c=tmp ,marker='o')
-
     
 
 
