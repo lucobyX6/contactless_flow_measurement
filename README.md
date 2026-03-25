@@ -53,6 +53,7 @@ Le projet est découpé en deux parties, l'étude de la réflectivité de l'eau 
 - ./0_Water_reflexion : Expériences sur la réflectance de l'eau. 
 - ./1_Real_time : Acquisition en temps réel des données du capteurs, traitement et affichage dynamique. 
 - ./2_3D_Object : Ensemble des modélisations 3D réalisées en support du projet. 
+- ./3_Academic_documents : Rapport et diaporama en anglais détaillant le projet. 
 
 Au vu de la durée du projet, nous avons préféré utiliser `PlatformIO` (similaire à `ArduinoIDE`) plutôt que `STM32 CubeIDE`. Le code est en `C++` et utilise la bibliothèque clef-en-main `SparkFun_VL53L5CX_Library` basé sur la bibliothèque de ST Microelectronics, [x-cube-tof1](https://github.com/STMicroelectronics/x-cube-tof1).  
 
