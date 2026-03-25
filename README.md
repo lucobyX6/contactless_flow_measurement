@@ -18,15 +18,25 @@ milieux à ciel ouvert où transitent une multitude de débris, dont des branche
 L'alternative actuelle est d'utiliser des capteurs basés sur la technologie radar, entre 10 et 80GHz. Ces derniers sont peu sensibles à la qualité de l'eau ou la présence d'algues et de sédiments. Ils admettent aussi une excellente précision et un faible entretien.
 Cependant, les objets en surface ou la turbulence des eaux affectent la fiabilité des résultat. De plus, le prix de ces capteurs pouvant atteindre plusieurs milliers d'euros, est un frein à leur déploiement à grande échelle. 
 
-## Capteurs actuellement utilisé
+## Capteur `Time-of-flight`
 
-Ce projet est une exploration de l'intérêt d'un capteur `Time-of-flight` dans l'acquisition du débit d'eau pour les canaux. Sur le papier, il représente une alternative peu coûteuse financièrement et énergétiquement par rapport aux solutions à base de technologies radars actuellement développées. Cependant, nos recherches révèlent que son usage dans ce milieu est complexe
+Ce projet est une exploration de l'intérêt d'un capteur `Time-of-flight` (TOF) dans l'acquisition du débit d'eau pour les canaux. Ce capteur est équipé d'un émetteur (Tx)et d'un récepteur (Rx). L'émeteur émet un signal infrarouge, réfléchi par la surface et qui retourne dans le récepteur. La carte d'acquisition intégré analyse la durée entre l'envoi et la réception et à partir de la vitesse de la lumière, constante dans l'air, elle déduit la distance d.     
+
+![Illustration of how the time-of-flight sensor works](./Readme_pictures/TOF.png "Illustration du fonctionnement du capteur Time-of-flight")
+
+
+Il existe deux types de capteurs `TOF` : 
+- Simple : Acquisition d'un unique point.
+- Multizone : Acquisition d'une matrice de points. _
+Nous avons utilisé le `TOF Multizone`, car il permet l'acquisition d'un échantillon de surface, plutôt qu'un unique point.
+
+Sur le papier, il représente une alternative peu coûteuse financièrement et énergétiquement par rapport aux solutions à base de technologies radars actuellement développées. Cependant, nos recherches révèlent que son usage dans ce milieu est **complexe**. 
 
 Ce travail est inspiré de la vidéo [Turn a Time-of-Flight Sensor into a 3D Scanner](https://www.youtube.com/watch?v=s32OUzhjf4U). 
 
 **Matériel utilisé :**
 - Carte `Nucleo - STM32 L476RG`
-- Capteur TOF `VL53L5CX` avec module SATEL
+- Capteur TOF Multizone `VL53L5CX` avec module SATEL
 - Servomoteur `Microservo 9g`
 
 **Documentation :**  \
@@ -43,6 +53,27 @@ Le projet est découpé en deux parties, l'étude de la réflectivité de l'eau 
 - ./0_Water_reflexion : Expériences sur la réflectance de l'eau. 
 - ./1_Real_time : Acquisition en temps réel des données du capteurs, traitement et affichage dynamique. 
 - ./2_3D_Object : Ensemble des modélisations 3D réalisées en support du projet. 
+
+## Phases du projet
+
+**Phase 1 : Modélisation de la surface de l'eau**
+
+La première approche a été d'essayer de modéliser la surface de l'eau. Le capteur est placé à un peu plus d'un mètre de la surface, de tel sorte que tous ses rayons soient réfléchies exclusivement sur l'eau. Toutes les 10ms il réalise une acquisition qui correpond à un échantillon de la surface de l'eau à l'instant t. En comparant les échantillons, on peut déduire une variation de hauteur et étudier l'aspect de la surface, potentiellement liée à la vitesse de l'eau. 
+
+Malheureusement, nos expériences sur la réflectance de l'eau, ont révélé qu'elle ne réfléchissait pas les infrarouges.  
+
+**Phase 2 : Détection d'objets en surface**
+
+L'eau absorbe l'intégralité des rayons infrarouges émis par le capteur. Ainsi, les objets en surface qui sont eux potentiellement réfléchissants peuvent être plus facilement détecté. Cela revient à placer un objet blanc sur une feuille noire. L'étude des mouvements de ces objets flottants, branches, feuilles et écorces serait une solution pour connaître la vitesse de l'eau en surface (dans un milieu où le vent est négligeable). 
+
+Malheureusement, la précision du capteur décroit avec la distance et la résolution augmente avec l'éloignement. Ces deux phénomènes couplés rendent presque impossible la détection d'un objet à un mètre de distance. 
+
+**Phase 3 : Mise en rotation du capteur**
+
+Pour permettre la détection précise d'objet, il faut obtenir des points d'acquisition plus proche et augmenter leur nombre. L'utilisation de plusieurs capteurs risque de provoquer des interférences optiques qui peuvent impacter la qualité des résultats. La solution la plus simple serait de placer le capteur sur un axe en rotation, à l'aide d'un moteur asservi. Le pas du moteur dicterait alors la résolution. Cette méthode s'émancipe du capteur multizone 8x8 pour revenir sur un TOF simple.     
+
+Cette phase n'a pas été achevée et reste à approfondir. 
+
 
 ## Conclusions
 
