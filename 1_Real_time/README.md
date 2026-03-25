@@ -3,6 +3,7 @@
 ## Organisation du répertoire : 
 
 Le répertoire du projet est constitué de la manière suivante :
+
 . \
 ├── 0_Static : Contient les pré-codes pour tester les fonctionnalités sur des données statiques avant l'implémentation dynamique. \
 │   ├── 0_Programs : Algorithme C++ et Python \
@@ -45,16 +46,16 @@ Le dossier `Objects_movement` contient les données pour la détection d'objets 
 
 ## Section dynamique
 
-Cette section est l'application sur un flux de données temps réel des opérations de la section statique. Chaque algorithme `C++` renvoit les valeurs nécessaires à l'algorithme `Python` lié. Cet algorithme affiche les valeurs dynamiquement dans une matrice 3D. L'échelle est en milimètre pour l'axe z et en identifiant de cellules pour l'axe x et y.  
+Cette section est l'application sur un flux de données temps réel des opérations de la section statique. Chaque algorithme `C++` renvoit les valeurs nécessaires à l'algorithme `Python` lié. Cet algorithme affiche les valeurs dynamiquement dans une matrice 3D. L'échelle est en milimètre pour l'axe z et en identifiant de cellules pour l'axe x et y (sauf à partir du dossier `/2_With_distances_between_points`).  
 
 **Dossiers :**
 - ./0_Without_obj_detect : Récupération des données de la `carte ST L476RG`, réflectances ou distances et affichage en 3D. 
 - ./1_With_obj_detect :  Récupération des données (distances mesurées) de la `carte ST L476RG`, traitement pour détecter les objets et affichage en 3D.  
 - ./2_With_distances_between_points : Récupération des données (distances mesurées), traitement pour détecter les objets et affichage en prenant en considération la distance entre les points d'acquisition (répartition homogène).   
-- ./3_With_rotation : Identique à précédemment, mais à l'aide d'une matrice de rotation, le capteur tourne dans l'espace. 
+- ./3_With_rotation : Identique à précédemment, mais à l'aide d'une matrice de rotation le capteur tourne dans l'espace. 
 
 **Cas particulier de `1_With_obj_detect` :**
 
-Pour utiliser le code Python `real_time_display_obj.py`, il convient d'utiliser le code C++ `real_time_acquisition.cpp` du dossier précédent. Le code C++ `3D_with_detection_objects.cpp` est une convertion du code Python en C++ pour détecter les objets directement sur la carte sans nécessiter un ordinateur. Le code Python `real_time_display_obj_from_C.py` permet d'afficher les résultats du code précédent.   
+Pour utiliser le code Python `real_time_display_obj.py`, il convient d'utiliser le code C++ `real_time_acquisition.cpp` du dossier précédent. Le code C++ `3D_with_detection_objects.cpp` est une convertion du code Python en C++ pour détecter les objets directement sur la carte sans nécessiter un ordinateur. Le code Python `real_time_display_obj_from_C.py` permet d'afficher les résultats de ce code C++.   
 
 ![Object detection result and 3D display](picture_readme.png "Résultat de la détection d'objet et affichage dans l'espace")

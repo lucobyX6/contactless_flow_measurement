@@ -21,15 +21,15 @@ L'objectif de cette expérience est d'obtenir un premier aperçu de la variation
 
 **Choix du récipient :**
 
-Le premier récipient utilisé était une casserole pour sa praticité d'usage et son volume. Cependant, le capteur renvoyé des valeurs étrangements faible, peu importe la quantité d'eau. Après comparaison avec un récipient en verre, il s'est avéré que la casserole fonctionnait comme un guide d'eau pour les rayons infrarouges. Pour écarter ce problème, l'expérience a été réalisée avec un bol de verre. 
+Le premier récipient utilisé était une casserole pour sa praticité d'usage et son volume. Cependant, le capteur renvoyait des valeurs étrangements faible, peu importe la quantité d'eau. Après comparaison avec un récipient en verre, il s'est avéré que la casserole fonctionnait comme un guide d'ondes pour les rayons infrarouges. Pour écarter ce problème, l'expérience a été réalisée avec un bol en verre. 
 
 **Acquisition :**
 
-La carte électronique génère au bout d'une dizaine de secondes une liste de 64 valeurs.  Chaque valeur est la moyenne des résultats pour ce point sur 10s. Les résultats sont stockées dans le dossier `./2_Data`.   
+La carte électronique génère au bout d'une dizaine de secondes une liste de 64 valeurs.  Chaque valeur est la moyenne des résultats pour un point d'acquisition sur 10s. Les résultats sont stockées dans le dossier `./2_Data`.   
 
 **Résultats :**
 
-Les résultats précédents sont traités par le programme python `E1_display_water_reflexion_results.py`. Ce dernier génère à partir de ces données des matrices. Elles sont stockées dans le dossier `./1_Pictures` avec le préfixe `E1_`. Chaque carré est une cellule d'acquisition du capteur.   
+Les résultats précédents sont traités par le programme python `E1_display_water_reflexion_results.py`. Ce dernier génère à partir de ces données des matrices. Elles sont stockées dans le dossier `./1_Pictures` avec le préfixe `E1_`. Chaque carré est une cellule d'acquisition du récepteur.   
 
 ![Results of the reflectivity measurement experiment for 0L, 1L and 2L of water in the container.](./1_Pictures/Measure_reflectance_on_water.png "Résultats de l'expérience de mesure de la réflectivité pour 0L, 1L et 2L d'eau dans le récipient.")
 
@@ -57,7 +57,7 @@ Les résultats sont traités par le programme python `E2_test_on_channel.py`.
 
 **Observations :**
 
-La moitié des rayons, ici la partie basse de l'image, se sont réfléchi sur le parapet en béton du canal. La réflectivité a été suffisante pour qu'ils renvoient une distance chiffrée. La seconde partie des rayons se sont réfléchis sur l'eau. Le capteur a transmis pour chacune de ces positions, une valeur 0. 
+La moitié des rayons, ici la partie basse de l'image, se sont réfléchis sur le parapet en béton du canal. La réflectance a été suffisante pour qu'ils renvoient une distance chiffrée. La seconde partie des rayons se sont réfléchis sur l'eau. Le capteur a transmis pour chacune de ces positions, une valeur 0. 
 
 Ce comportement a lieu si aucun rayon ne revient en direction du capteur, car la surface est trop lointaine, ou dans le cas, où la réflectance est nulle. Dans le cas de cette expérience, le capteur est à moins d'un mètre de la surface acqueuse. Ainsi, l'eau a absorbé tous les rayons.
 
