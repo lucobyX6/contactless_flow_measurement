@@ -91,6 +91,7 @@ def animate(i):
     x_temp,y_temp,z_temp=0,0,0
     x_rot,y_rot,z_rot=0,0,0
 
+    # Using a rotation matrix to rotate value in space
     for row in range(8):
         for col in range(8):
             index = 8*row + col
@@ -106,6 +107,7 @@ def animate(i):
             y.append(y_rot)
             z.append(z_rot)
 
+    # Display
     ax1.clear()
     ax1.set_xlim(-1000, 1000)    
     ax1.set_ylim(-1000, 1000)   

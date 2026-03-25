@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Read results file
-file = open("contactless_flow_measurement/1_Real_time/0_Static/1_Data/Distance_problem/small_obj_far.txt", "r")
+file = open("contactless_flow_measurement/1_Real_time/0_Static/1_Data/Distance_problem/distant_obj_on_water_V2.txt", "r")
 content = file.read()
 file.close()
 
@@ -25,7 +25,7 @@ vmin_raw = 0
 vmax_raw = 700
 
 im_raw = ax_raw.imshow(matrice_water, cmap='coolwarm', vmin=vmin_raw, vmax=vmax_raw)
-ax_raw.set_title("Measure near to the object")
+ax_raw.set_title("Measure far to the object")
 fig_raw.colorbar(im_raw, ax=ax_raw) 
 
 plt.tight_layout()
