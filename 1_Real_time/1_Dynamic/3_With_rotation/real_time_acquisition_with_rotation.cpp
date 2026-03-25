@@ -1,21 +1,27 @@
 #include <Wire.h>
 #include <SparkFun_VL53L5CX_Library.h>
+#include <Servo.h>
 
 // Pin definitions
 #define SDA_PIN PB9
 #define SCl_PIN PB8
 #define LPN_PIN PB0
 #define PWR_EN_PIN PC0
+#define PWM_SERVO_PIN PB10
 
 // VL53L5CX ToF sensor instance
 SparkFun_VL53L5CX sensor;
 VL53L5CX_ResultsData measurementData;
 
+// DF9GMS servo motor instance
+Servo servo_tof;
+
 // I2C speed - use 1MHz for fast data transfer
 #define I2C_SPEED 1000000
 
-// Angle
-float angle =0.0;
+// Angle °
+int angle =0;
+int direction =1;
 
 void setup() {
   Serial.begin(115200); // COM 115200 bauds
@@ -32,6 +38,10 @@ void setup() {
   pinMode(LPN_PIN, OUTPUT);
   digitalWrite(LPN_PIN, HIGH);
   delay(10);
+
+  // Servomotor
+  servo_tof.attach(PWM_SERVO_PIN); 
+  Serial.println("[INFO] Servo ready");
 
   // Initialize I2C with specified pins and speed
   Wire.begin();
@@ -70,7 +80,7 @@ void loop() {
   // Check if new ToF data is available
   if (sensor.isDataReady()) {
     if (sensor.getRangingData(&measurementData)) {
-      Serial.println(angle);
+      Serial.printf("%d\n", angle);
       // Send all value using serial port
       for (int row = 0; row < 8; row++) 
       {
@@ -87,4 +97,16 @@ void loop() {
 
   // Small delay to prevent overwhelming the serial buffer
   delay(50);
+
+  angle = angle + direction;
+  servo_tof.write(angle);  
+  if(angle >= 180)
+  {
+    while(1);
+    direction = -1;
+  }
+  if(angle <= 0)
+  {
+    direction = 1;
+  }
 }

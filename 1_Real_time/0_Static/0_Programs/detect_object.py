@@ -8,7 +8,7 @@ group = 1 # Group counter
 find = False # No neighbor with a group
 
 # Read results file
-f = open("contactless_flow_measurement/1_Real_time/0_Static/0_Programs/object_values.txt" ,"r")
+f = open("contactless_flow_measurement/1_Real_time/0_Static/1_Data/E3_Second_pos_obj.txt" ,"r")
 content = f.read()
 f.close()
 
@@ -26,15 +26,16 @@ for i in range(len(split_list_x)):
         matrice[int(split_list_x[i])][int(split_list_y[i])] = int(split_list_z[i])
 
 # Distance matrice before obj identification
-vmin = min(split_list_z)
-vmax = max(split_list_z)
+vmin = 0
+vmax = 700
 
 fig0 = plt.figure()
 ax0 = fig0.add_subplot()
 
 im = ax0.matshow(matrice, cmap='viridis', vmin=vmin, vmax=vmax)
-ax0.set_title("Valeurs brutes")
+ax0.set_title("Raw values - position 2")
 fig0.colorbar(im, ax=ax0)
+plt.savefig("contactless_flow_measurement/1_Real_time/0_Static/2_Pictures/raw_pos2.png")
 
 # Identify object
 matrice_objects = np.zeros((8,8))

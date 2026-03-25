@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Read results file
-file = open("contactless_flow_measurement/0_Water_reflexion/2_Data/data.txt", "r")
+file = open("contactless_flow_measurement/0_Water_reflexion/2_Data/channel_water_test.txt", "r")
 content = file.read()
 file.close()
 
@@ -25,7 +25,7 @@ vmin_raw = matrice_water.min()
 vmax_raw = matrice_water.max()
 
 im_raw = ax_raw.imshow(matrice_water, cmap='coolwarm', vmin=vmin_raw, vmax=vmax_raw)
-ax_raw.set_title("Valeur mesurée sur le canal")
+ax_raw.set_title("Distance measure on channel")
 fig_raw.colorbar(im_raw, ax=ax_raw) 
 
 plt.tight_layout()
