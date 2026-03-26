@@ -102,7 +102,6 @@ void loop() {
   servo_tof.write(angle);  
   if(angle >= 180)
   {
-    while(1);
     direction = -1;
   }
   if(angle <= 0)
