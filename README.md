@@ -38,6 +38,19 @@ Ce travail est inspiré de la vidéo [Turn a Time-of-Flight Sensor into a 3D Sca
 - Capteur TOF Multizone `VL53L5CX` avec module SATEL
 - Servomoteur `Microservo 9g`
 
+| Pin      | Fonction      |
+| ------------- | ------------- |
+| PB9 | SDA - TOF |
+| PB8 | SCL - TOF |
+| PB0 | LPN - TOF |
+| GND | I2C - RST |
+| PB0 | LPN - TOF |
+| PC0 | PWR_EN - TOF |
+| 5V | AVDD |
+| 3.3V | IOVDD |
+| PB10 | Servo - PWM |
+
+
 **Documentation :**  \
 [1] VL53L8CX Datasheet, ST Microelectronics, 22 December 2022 . [En ligne]. Disponible suivant ce [lien](https://www.st.com/resource/en/datasheet/vl53l8cx.pdf)
 
